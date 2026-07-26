@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.Common.Tests;
+package org.firstinspires.ftc.teamcode.Testing.Tests;
 
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
+import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
 import org.firstinspires.ftc.teamcode.blaze.BlazeAutoOpMode;
 
 public class BlazeTestAuto extends BlazeAutoOpMode<AutoCore> {

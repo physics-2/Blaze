@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Common.Tests;
+package org.firstinspires.ftc.teamcode.Testing.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
+import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
 import org.firstinspires.ftc.teamcode.blaze.MultiDashTelemetry;
 
 @Config

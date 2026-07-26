@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Common.Configs;
+package org.firstinspires.ftc.teamcode.Testing.Configs;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 

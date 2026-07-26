@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.Common.Tests;
+package org.firstinspires.ftc.teamcode.Testing.Tests;
 
 import static org.firstinspires.ftc.teamcode.blaze.MultiThread.SyncTopicBus.getLatest;
 
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
+import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
 import org.firstinspires.ftc.teamcode.blaze.Anotations.AutowireActuator;
 import org.firstinspires.ftc.teamcode.blaze.MultiDashTelemetry;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.SmartMotor;
@@ -26,19 +26,20 @@ public class TestBlazingModule extends BlazingModule {
     @AutowireActuator
     ActuatorGroup testGroup;
 
+
+
+
+    String message;
+    boolean needsRun = false;
+
     public TestBlazingModule(String name) {
         super(name);
     }
 
     public TestBlazingModule(String name, MultiDashTelemetry telemetry) {
         super(name, telemetry);
-
     }
 
-
-
-    String message;
-    boolean needsRun = false;
     @Override
     public void commonInit() {
         super.commonInit();

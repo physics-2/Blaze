@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.blaze;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
+import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
 import org.firstinspires.ftc.teamcode.blaze.Anotations.GetModule;
 import org.firstinspires.ftc.teamcode.blaze.ModuleSubsystem.BlazingModule;
 import org.firstinspires.ftc.teamcode.blaze.MultiThread.SyncTopicBus;

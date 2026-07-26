@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Common.Tests;
+package org.firstinspires.ftc.teamcode.Testing.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
-import org.firstinspires.ftc.teamcode.Common.Parts.TeleCore;
+import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
+import org.firstinspires.ftc.teamcode.Testing.Parts.TeleCore;
 import org.firstinspires.ftc.teamcode.blaze.BlazeTeleOp;
 
 @TeleOp

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Common.Configs;
+package org.firstinspires.ftc.teamcode.Testing.Configs;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;

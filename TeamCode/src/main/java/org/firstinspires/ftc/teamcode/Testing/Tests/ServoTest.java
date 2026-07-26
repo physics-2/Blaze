@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.Common.Tests;
+package org.firstinspires.ftc.teamcode.Testing.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
+import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
 import org.firstinspires.ftc.teamcode.blaze.BlazeLinearOpMode;
 
 @Config

@@ -1,10 +1,7 @@
-package org.firstinspires.ftc.teamcode.Common.Configs;
+package org.firstinspires.ftc.teamcode.Testing.Configs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.Pose;
-
-import org.firstinspires.ftc.teamcode.Common.Parts.ColorSensor.ColorSensor;
 
 @Config
 @Configurable

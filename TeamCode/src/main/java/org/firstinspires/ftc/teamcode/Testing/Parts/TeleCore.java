@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.Common.Parts;
+package org.firstinspires.ftc.teamcode.Testing.Parts;
 
-import org.firstinspires.ftc.teamcode.Auto.AutoDrive;
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
-import org.firstinspires.ftc.teamcode.Common.Parts.BlazeModules.Lift;
+import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
+import org.firstinspires.ftc.teamcode.Testing.Parts.BlazeModules.Lift;
 import org.firstinspires.ftc.teamcode.blaze.Anotations.GetModule;
 import org.firstinspires.ftc.teamcode.blaze.BlazeCommon;
 

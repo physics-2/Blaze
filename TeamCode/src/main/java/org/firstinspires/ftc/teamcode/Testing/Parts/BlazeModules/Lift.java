@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Common.Parts.BlazeModules;
+package org.firstinspires.ftc.teamcode.Testing.Parts.BlazeModules;
 
 import com.bylazar.configurables.annotations.Configurable;
 
