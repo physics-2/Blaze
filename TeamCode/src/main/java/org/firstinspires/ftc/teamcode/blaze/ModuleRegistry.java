@@ -61,11 +61,13 @@ public class ModuleRegistry {
                         validClasses.add(line.trim());
                     }
                 }
-            } catch (IOException e) {
-                BlazeLogger.addErrorLog(ModuleRegistry.class.getSimpleName(),"Cache read failed, falling back to scan: " + e.getMessage());
-                cacheHit = false; // Если не удалось прочитать, идем на полное сканирование
+            }  catch (IOException e) {
+                BlazeLogger.addErrorLog(ModuleRegistry.class.getSimpleName(), "Cache read failed, falling back to scan: " + e.getMessage());
+                cacheHit = false;
+            } catch (Exception e) { // Ловим любые неожиданные ошибки парсинга
+                BlazeLogger.addErrorLog(ModuleRegistry.class.getSimpleName(), "Cache parsing error, falling back to scan: " + e.getMessage());
+                cacheHit = false;
             }
-            catch (ArrayIndexOutOfBoundsException e ){}
         }
 
         long msTimeStart = System.currentTimeMillis();
@@ -153,16 +155,18 @@ public class ModuleRegistry {
         for (ModuleInfo info : registry.values()) {
             if (info.instance != null) continue;
             try {
+                java.lang.reflect.Constructor<?> constructor = info.type.getDeclaredConstructor();
+                constructor.setAccessible(true);
+
+                info.instance = (BlazingModule) constructor.newInstance();
+                String moduleName = info.name;
+
                 if (info.type.getAnnotation(InitWithTelemetry.class) != null && telemetry != null){
                     BlazeLogger.addDefaultLog(ModuleRegistry.class.getSimpleName(),"Creating module " + info.name + " with telemetry");
-                    info.instance = info.type
-                            .getConstructor(String.class, MultiDashTelemetry.class)
-                            .newInstance(info.name,telemetry);
+                    info.instance.autowireSelf(moduleName,telemetry);
                 } else if (info.type.getAnnotation(InitWithoutTelemetry.class) != null || telemetry == null) {
                     BlazeLogger.addDefaultLog(ModuleRegistry.class.getSimpleName(),"Creating module " + info.name + " without telemetry");
-                    info.instance = info.type
-                            .getConstructor(String.class)
-                            .newInstance(info.name);
+                    info.instance.autowireSelf(moduleName,null);
                 }
 
 

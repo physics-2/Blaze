@@ -16,16 +16,6 @@ public class AutoDrive extends BlazingModule {
     private Follower follower;
     private boolean isFollowing = false;
 
-    public AutoDrive(String name) {
-        super(name);
-        commonInit();
-    }
-
-    public AutoDrive(String name, org.firstinspires.ftc.teamcode.blaze.MultiDashTelemetry telemetry) {
-        super(name, telemetry);
-        commonInit();
-    }
-
     @Override
     public void commonInit() {
 

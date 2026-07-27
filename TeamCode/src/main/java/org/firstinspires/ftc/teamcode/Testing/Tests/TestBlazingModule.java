@@ -32,14 +32,6 @@ public class TestBlazingModule extends BlazingModule {
     String message;
     boolean needsRun = false;
 
-    public TestBlazingModule(String name) {
-        super(name);
-    }
-
-    public TestBlazingModule(String name, MultiDashTelemetry telemetry) {
-        super(name, telemetry);
-    }
-
     @Override
     public void commonInit() {
         super.commonInit();

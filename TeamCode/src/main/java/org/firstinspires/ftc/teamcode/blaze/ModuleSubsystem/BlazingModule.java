@@ -31,18 +31,8 @@ public abstract class BlazingModule {
     protected String name;
     protected ModuleState moduleState;
 
-    public BlazingModule(String name) {
-        this.name = name;
-        this.scheduler = BlazeCore.getScheduler();
-        initPowerTrain();
-        autoWireActuators();
-        autoRegisterCommands();
-        subscribe(name, this::processCommand);
-        BlazeLogger.addDefaultLog("Module."+name,"Created");
-
-    }
-
-    public BlazingModule(String name, MultiDashTelemetry telemetry) {
+    protected BlazingModule() {}
+    public void autowireSelf(String name, MultiDashTelemetry telemetry){
         this.name = name;
         this.scheduler = BlazeCore.getScheduler();
         this.telemetry = telemetry;
@@ -51,14 +41,11 @@ public abstract class BlazingModule {
         autoRegisterCommands();
         subscribe(name, this::processCommand);
         BlazeLogger.addDefaultLog("Module."+name,"Created");
-
     }
 
     private void initPowerTrain() {
         this.powerTrain = BlazeCore.getPowerTrainByModule(name);
         BlazeLogger.addDefaultLog("Module."+name,"Found autowire: " + powerTrain.getName());
-
-
     }
 
     private void autoWireActuators() {
@@ -144,22 +131,18 @@ public abstract class BlazingModule {
         if (arg == null) return null;
         if (targetType.isInstance(arg)) return arg;
 
-        // Конвертация примитивов
-        if (targetType == double.class || targetType == Double.class) {
-            return ((Number) arg).doubleValue();
-        } else if (targetType == int.class || targetType == Integer.class) {
-            return ((Number) arg).intValue();
-        } else if (targetType == float.class || targetType == Float.class) {
-            return ((Number) arg).floatValue();
-        } else if (targetType == long.class || targetType == Long.class) {
-            return ((Number) arg).longValue();
-        } else if (targetType == boolean.class || targetType == Boolean.class) {
-            return arg;
-        } else if (targetType == String.class) {
-            return arg.toString();
+        String argStr = String.valueOf(arg);
+        try {
+            if (targetType == double.class || targetType == Double.class) return Double.parseDouble(argStr);
+            if (targetType == int.class || targetType == Integer.class) return Integer.parseInt(argStr);
+            if (targetType == float.class || targetType == Float.class) return Float.parseFloat(argStr);
+            if (targetType == long.class || targetType == Long.class) return Long.parseLong(argStr);
+            if (targetType == boolean.class || targetType == Boolean.class) return Boolean.parseBoolean(argStr);
+            if (targetType == String.class) return argStr;
+        } catch (NumberFormatException e) {
+            BlazeLogger.addErrorLog("BlazingModule", "Failed to convert arg '" + arg + "' to " + targetType.getSimpleName());
         }
-
-        return arg;
+        return arg; // Или выбросить IllegalArgumentException, если строгая типизация критична
     }
 
     public void onStop(){

@@ -21,20 +21,6 @@ public class Lift extends BlazingModule {
 
     @AutowireActuator
     SmartMotor liftMotor;
-    public Lift(String name) {
-        super(name);
-    }
-
-    public Lift(String name, MultiDashTelemetry telemetry) {
-        super(name, telemetry);
-    }
-
-    @Override
-    public void commonInit() {
-        super.commonInit();
-
-    }
-
     @Command()
     public void liftUp(){
         liftMotor.setTarget(UP_POSE);
