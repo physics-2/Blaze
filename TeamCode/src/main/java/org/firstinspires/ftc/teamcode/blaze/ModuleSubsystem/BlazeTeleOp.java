@@ -1,4 +1,7 @@
-package org.firstinspires.ftc.teamcode.blaze;
+package org.firstinspires.ftc.teamcode.blaze.ModuleSubsystem;
+
+import org.firstinspires.ftc.teamcode.blaze.BlazeCommon;
+import org.firstinspires.ftc.teamcode.blaze.BlazeOpMode;
 
 public abstract class BlazeTeleOp<Core extends BlazeCommon> extends BlazeOpMode {
     protected Core core;

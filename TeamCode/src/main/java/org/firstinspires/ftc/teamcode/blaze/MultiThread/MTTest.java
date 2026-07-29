@@ -25,15 +25,15 @@ public class MTTest extends OpMode {
     private final AtomicLong batchFlushed = new AtomicLong();
     private final AtomicLong overrunCount = new AtomicLong();
 
-    private long lastLoopNs = 0;
-    private long loopDtUs = 0;
-    private long coopUs = 0;
-    private long batchUs = 0;
+    private final long lastLoopNs = 0;
+    private final long loopDtUs = 0;
+    private final long coopUs = 0;
+    private final long batchUs = 0;
 
-    private long lastTopicPublishMs = 0;
+    private final long lastTopicPublishMs = 0;
 
-    private boolean lastA = false;
-    private boolean lastB = false;
+    private final boolean lastA = false;
+    private final boolean lastB = false;
 
     private Runnable batchTask;
     private Runnable visionTask;

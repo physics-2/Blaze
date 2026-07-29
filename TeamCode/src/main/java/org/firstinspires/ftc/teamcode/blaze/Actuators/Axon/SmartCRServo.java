@@ -6,9 +6,9 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.Actuator;
+import org.firstinspires.ftc.teamcode.blaze.BlazeLogger;
 import org.firstinspires.ftc.teamcode.blaze.Controllers.Controller;
 import org.firstinspires.ftc.teamcode.blaze.Controllers.PIDController;
 
@@ -33,27 +33,36 @@ public class SmartCRServo implements Actuator {
     private double target;
     CRServoCustom servo;
     public SmartCRServo(HardwareMap hwMap, String id, String encoderID, AngleUnit angleUnit) {
+        long startTime = System.currentTimeMillis();
         servo = new CRServoCustom(hwMap,id);
         this.id = id;
         this.encoder = new AnalogEncoder(hwMap, encoderID, 3.3, angleUnit);
         servo.setPower(0);
+        long timeToDo = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("SmartCRServo." + servo.id(),"Took " + timeToDo + " ms to full init");
     }
 
     private SmartCRServo(CRServoCustom servo, Encoder encoder, Controller controller,double tolerance) {
+        long startTime = System.currentTimeMillis();
         this.servo = servo;
         this.tolerance = tolerance;
         PID = controller;
         this.encoder = encoder;
         this.id = servo.id();
         servo.setPower(0);
+        long timeToDo = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("SmartCRServo." + servo.id(),"Took " + timeToDo + " ms to full init");
     }
 
     public SmartCRServo(HardwareMap hwMap, String id, String encoderID, Controller controller) {
+        long startTime = System.currentTimeMillis();
         servo = new CRServoCustom(hwMap,id);
         this.encoder = new AnalogEncoder(hwMap, encoderID, 3.3, AngleUnit.DEGREES);
         PID = controller;
         this.id = servo.id();
         servo.setPower(0);
+        long timeToDo = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("SmartCRServo." + servo.id(),"Took " + timeToDo + " ms to full init");
     }
 
     @Override

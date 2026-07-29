@@ -10,16 +10,26 @@ public abstract class BlazeOpMode extends OpMode {
     LynxModule.BulkCachingMode cacheType = LynxModule.BulkCachingMode.MANUAL;
     @Override
     public final void init() {
-        Long startTime = System.currentTimeMillis();
+
+        long startTime = System.currentTimeMillis();
         BlazeLogger.addDefaultLog("OPMODE","Initing...");
+
         setLynxCacheType(cacheType);
+
         BlazeCore.createConfig(hardwareMap);
+
+        long took = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("OPMODE","took  " + took + " ms to create config");
+
+        BlazeCore.scanAnnotations();
         BlazeCore.setTelemetry(telemetry);
         BlazeCore.createModules();
+
         BlazeCore.addGamepads(gamepad1,gamepad2);
 
         initHotWrite();
-        Long took = System.currentTimeMillis() - startTime;
+
+        took = System.currentTimeMillis() - startTime;
         BlazeLogger.addDefaultLog("OPMODE","Init finished,took " + took + "ms");
     }
 
@@ -38,14 +48,14 @@ public abstract class BlazeOpMode extends OpMode {
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(cacheType);
+
         }
     }
 
     @Override
     public void stop() {
-        BlazeLogger.addDefaultLog("OPMODE", "Stopping and cleaning up...");
         BlazeCore.destroyHardware();
-        ModuleRegistry.clear();
+        BlazeRegistry.clear();
         onStopHotWrite();
     }
 

@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.blaze.BlazeLogger;
+
 public class SmartServo implements Actuator{
     Servo servo;
     double tolerance;
@@ -21,9 +23,12 @@ public class SmartServo implements Actuator{
     }
 
     public SmartServo(HardwareMap hardwareMap,String name, Servo.Direction direction){
+        long startTime = System.currentTimeMillis();
         servo = hardwareMap.get(Servo.class,name);
         this.name = name;
         servo.setDirection(direction);
+        long timeToDo = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("SmartServo." + name,"Took " + timeToDo + " ms to full init");
     }
 
     @Override

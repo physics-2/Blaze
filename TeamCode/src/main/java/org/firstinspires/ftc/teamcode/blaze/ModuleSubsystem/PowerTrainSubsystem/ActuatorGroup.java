@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.blaze.ModuleSubsystem.PowerTrainSubsystem;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.Actuator;
+import org.firstinspires.ftc.teamcode.blaze.Actuators.SmartMotor;
 import org.firstinspires.ftc.teamcode.blaze.Controllers.Controller;
 
 import java.util.ArrayList;
@@ -68,6 +70,19 @@ public class ActuatorGroup implements Actuator {
     }
 
 
+    /**
+     * Gets current from motors,because others don't have the needed method
+     * @return current from motors
+     */
+    public double getCurrent(){
+        double totalCurrent = 0;
+        for (Actuator actuator : actuators) {
+            if(actuator instanceof SmartMotor){
+                totalCurrent += ((SmartMotor) actuator).getCurrent(CurrentUnit.AMPS);
+            }
+        }
+        return totalCurrent;
+    }
 
     @Override
     public String getID() {
@@ -109,6 +124,8 @@ public class ActuatorGroup implements Actuator {
         }
     }
 
+
+
     @Override
     public TargetMode getMode() {
         return leader != null ? leader.getMode() : TargetMode.POSITION;
@@ -136,6 +153,10 @@ public class ActuatorGroup implements Actuator {
     }
 
 
+    /**
+     * Returns the current PID feedback
+     * @return position,or velocity if in the VELOCITY mode
+     */
     @Override
     public double getPosition() {
         if (actuators.isEmpty()) return 0;
@@ -151,13 +172,14 @@ public class ActuatorGroup implements Actuator {
                 for (Actuator act : actuators) min = Math.min(min, act.getPosition());
                 return min;
             case MAX:
-                double max = Double.NEGATIVE_INFINITY;;
+                double max = Double.NEGATIVE_INFINITY;
                 for (Actuator act : actuators) max = Math.max(max, act.getPosition());
                 return max;
             default:
                 return leader.getPosition();
         }
     }
+
 
 
     public double getLastTarget() {

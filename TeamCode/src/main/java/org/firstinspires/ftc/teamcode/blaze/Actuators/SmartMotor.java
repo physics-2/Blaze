@@ -10,15 +10,16 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.blaze.BlazeLogger;
 import org.firstinspires.ftc.teamcode.blaze.Controllers.Controller;
 
 @Configurable
 public class SmartMotor implements Actuator{
 
     private  double max_power = 1;
-    private String id;
+    private final String id;
     private TargetMode targetMode = TargetMode.POSITION;
-    private DcMotorEx dcMotor;
+    private final DcMotorEx dcMotor;
     private Controller controller;
     private double ticksToDegrees;
     private double tolerance = 10;
@@ -62,6 +63,7 @@ public class SmartMotor implements Actuator{
 
     public SmartMotor(HardwareMap hardwareMap, String name, DcMotorSimple.Direction direction,
                       double ticksToDegrees, Controller controller, boolean isEncoderReversed,double max_power){
+        long startTime = System.currentTimeMillis();
         dcMotor = hardwareMap.get(DcMotorEx.class,name);
         this.max_power = max_power;
         dcMotor.setDirection(direction);
@@ -72,15 +74,20 @@ public class SmartMotor implements Actuator{
         dcMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         dcMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         dcMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        long timeToDo = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("SmartMotor." + name,"Took " + timeToDo + " ms to full init");
     }
 
     public SmartMotor(HardwareMap hardwareMap, String name, DcMotorSimple.Direction direction){
+        long startTime = System.currentTimeMillis();
         dcMotor = hardwareMap.get(DcMotorEx.class,name);
         dcMotor.setDirection(direction);
         this.id = name;
         dcMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         dcMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         dcMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        long timeToDo = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("SmartMotor." + name,"Took " + timeToDo + " ms to full init");
     }
 
     public void setDirection(DcMotorSimple.Direction direction){
@@ -139,15 +146,16 @@ public class SmartMotor implements Actuator{
 
     /**
      * Returns the current PID feedback name
-     * @return position,or velocity if in the VELOCITY mode
+     * @return position,or velocity(in Degrees Per Second) if in the VELOCITY mode
      */
     @Override
     public double getPosition() {
+
         switch (targetMode) {
             case POSITION:
                 return dcMotor.getCurrentPosition() * ticksToDegrees * (isEncoderReversed ? -1 : 1);
             case VELOCITY:
-                return (dcMotor.getVelocity() * ticksToDegrees * (isEncoderReversed ? -1 : 1)) / 6.0;
+                return (dcMotor.getVelocity() * ticksToDegrees * (isEncoderReversed ? -1 : 1));
             case CUSTOM:
                 return dcMotor.getCurrentPosition() * (isEncoderReversed ? -1 : 1);
         }

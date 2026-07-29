@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.blaze;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(group = "AAA HotWrite",name = "Pre Init HW")
+@Autonomous(group = "AAA Blaze",name = "Pre Init Blaze")
 public class PreInit extends BlazeOpMode {
     @Override
     public void initHotWrite() {

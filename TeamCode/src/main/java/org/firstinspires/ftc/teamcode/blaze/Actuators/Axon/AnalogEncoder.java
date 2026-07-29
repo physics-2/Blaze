@@ -17,8 +17,8 @@ public class AnalogEncoder implements Encoder{
     private double offset = 0.0;
     private final double range;
     private final AngleUnit angleUnit;
-    private boolean reversed;
-    private ElapsedTime timer = new ElapsedTime();
+    private final boolean reversed;
+    private final ElapsedTime timer = new ElapsedTime();
     private double lastPos;
     private double vel = 0;
 

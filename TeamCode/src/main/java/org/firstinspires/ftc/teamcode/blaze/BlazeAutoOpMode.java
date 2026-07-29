@@ -20,6 +20,7 @@ public abstract class BlazeAutoOpMode<Core extends BlazeCommon> extends BlazeOpM
         core.allModulesInit();
         core.init();
         core.setupAlliance();
+
         buildPaths();
         addActions();
     }

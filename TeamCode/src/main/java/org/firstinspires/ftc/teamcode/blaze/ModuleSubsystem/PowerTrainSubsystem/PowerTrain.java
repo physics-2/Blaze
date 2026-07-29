@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.blaze.Actuators.Actuator;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.SmartMotor;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.SmartServo;
 import org.firstinspires.ftc.teamcode.blaze.Controllers.Controller;
+import org.firstinspires.ftc.teamcode.blaze.ModuleSubsystem.BlazingModule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +20,8 @@ public class PowerTrain {
     private final HashMap<String, Actuator> registry = new HashMap<>();
 
 
-    private double globalPowerScale = 1.0;
-    private boolean emergencyStop = false;
+    private final double globalPowerScale = 1.0;
+    private final boolean emergencyStop = false;
     private boolean isEnabled = true;
     String autowireModule;
     String name;
@@ -158,7 +159,7 @@ public class PowerTrain {
         private boolean isMock = false;
 
 
-        private String name ;
+        private final String name ;
 
         private ActuatorGroup currentGroup = null;
 
@@ -292,6 +293,11 @@ public class PowerTrain {
 
         public builder autowireTo(String name){
             autowireModule = name;
+            return this;
+        }
+
+        public builder autowireTo(Class<? extends BlazingModule> clazz){
+            autowireModule = clazz.getSimpleName();
             return this;
         }
 

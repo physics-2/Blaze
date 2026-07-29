@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.blaze.ModuleSubsystem;
 
-import org.firstinspires.ftc.teamcode.blaze.Anotations.AutowireActuator;
-import org.firstinspires.ftc.teamcode.blaze.Anotations.Command;
-import org.firstinspires.ftc.teamcode.blaze.CommandWithArgs;
-import org.firstinspires.ftc.teamcode.blaze.BlazeLogger;
-import org.firstinspires.ftc.teamcode.blaze.MultiDashTelemetry;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.Actuator;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.Axon.SmartCRServo;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.SmartMotor;
 import org.firstinspires.ftc.teamcode.blaze.Actuators.SmartServo;
+import org.firstinspires.ftc.teamcode.blaze.Anotations.AutowireActuator;
 import org.firstinspires.ftc.teamcode.blaze.BlazeCore;
-
+import org.firstinspires.ftc.teamcode.blaze.BlazeLogger;
+import org.firstinspires.ftc.teamcode.blaze.Command;
 import org.firstinspires.ftc.teamcode.blaze.ModuleSubsystem.PowerTrainSubsystem.PowerTrain;
+import org.firstinspires.ftc.teamcode.blaze.MultiDashTelemetry;
 import org.firstinspires.ftc.teamcode.blaze.MultiThread.Scheduler;
 import org.firstinspires.ftc.teamcode.blaze.MultiThread.SyncTopicBus;
 
@@ -22,12 +20,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class BlazingModule {
+    private interface CommandExecutor {
+        void execute(Object[] args) throws Exception;
+    }
     protected PowerTrain powerTrain;
     protected Scheduler scheduler;
 
     protected MultiDashTelemetry telemetry;
-    private Map<String, Runnable> commandHandlers = new HashMap<>();
-    private Map<String, Consumer<Object>> commandConsumers = new HashMap<>();
+
+    private final Map<String, CommandExecutor> commandHandlers = new HashMap<>();
     protected String name;
     protected ModuleState moduleState;
 
@@ -45,12 +46,14 @@ public abstract class BlazingModule {
 
     private void initPowerTrain() {
         this.powerTrain = BlazeCore.getPowerTrainByModule(name);
+        if(powerTrain == null) throw new RuntimeException("Module " + getName() +" was autowired,but found no coresponding powertrains."+
+                "Please add a powerTrain autowired to this module");
         BlazeLogger.addDefaultLog("Module."+name,"Found autowire: " + powerTrain.getName());
     }
 
     private void autoWireActuators() {
         if (powerTrain == null) return;
-
+        long startTime = System.currentTimeMillis();
         for (Field field : this.getClass().getDeclaredFields()) {
             field.setAccessible(true);
 
@@ -74,6 +77,8 @@ public abstract class BlazingModule {
                 );
             }
         }
+        long timeToEnd = System.currentTimeMillis() - startTime;
+        BlazeLogger.addDefaultLog("Module."+name,"Took " + timeToEnd + " ms to autowire self");
     }
 
 
@@ -92,44 +97,66 @@ public abstract class BlazingModule {
 
     protected void autoRegisterCommands() {
         for (Method method : this.getClass().getDeclaredMethods()) {
-            Command cmdAnnotation = method.getAnnotation(Command.class);
+            org.firstinspires.ftc.teamcode.blaze.Anotations.Command cmdAnnotation = method.getAnnotation(org.firstinspires.ftc.teamcode.blaze.Anotations.Command.class);
             if (cmdAnnotation != null) {
                 method.setAccessible(true);
-                String cmdName = cmdAnnotation.value();
-                if (cmdName.isEmpty()){
-                    cmdName = method.getName();
-                }
+                String cmdName = cmdAnnotation.value().isEmpty() ? method.getName() : cmdAnnotation.value();
+                Class<?>[] paramTypes = method.getParameterTypes();
 
-                if (method.getParameterCount() == 0) {
-                    commandHandlers.put(cmdName, () -> {
-                        try {
-                            method.invoke(this);
-                        } catch (Exception e) {
-                            BlazeLogger.addDefaultLog(name, "Error executing command '"  + "': " + e.getMessage());
-                            throw new RuntimeException(e);
+                commandHandlers.put(cmdName, (args) -> {
+                    try {
+                        // 1. Проверка количества аргументов
+                        if (args.length != paramTypes.length) {
+                            throw new IllegalArgumentException(
+                                    "Command '" + cmdName + "' expects " + paramTypes.length +
+                                            " args, but got " + args.length
+                            );
                         }
-                    });
-                } else if (method.getParameterCount() == 1) {
-                    commandConsumers.put(cmdName, (args) -> {
-                        try {
-                            Class<?> paramType = method.getParameterTypes()[0];
-                            Object convertedArg = convertArgument(args, paramType);
-                            method.invoke(this, convertedArg);
-                        } catch (Exception e) {
-                            BlazeLogger.addDefaultLog(name, "Error executing command '"  + "': " + e.getMessage());
-                            throw new RuntimeException(e);
+
+                        Object[] finalArgs = new Object[paramTypes.length];
+                        for (int i = 0; i < paramTypes.length; i++) {
+                            finalArgs[i] = convertArgument(args[i], paramTypes[i]);
                         }
-                    });
-                } else {
-                    BlazeLogger.addDefaultLog(name, "Command '" + cmdName + "' has unsupported parameter count: " + method.getParameterCount());
-                }
+
+                        method.invoke(this, finalArgs);
+
+                    } catch (Exception e) {
+                        Throwable cause = (e instanceof java.lang.reflect.InvocationTargetException)
+                                ? ((java.lang.reflect.InvocationTargetException) e).getTargetException()
+                                : e;
+                        BlazeLogger.addErrorLog(name, "Error executing command '" + cmdName + "': " + cause.getMessage());
+                        throw new RuntimeException(cause);
+                    }
+                });
             }
         }
     }
 
     private Object convertArgument(Object arg, Class<?> targetType) {
-        if (arg == null) return null;
+        if (arg == null) {
+            if (targetType.isPrimitive()) {
+                throw new IllegalArgumentException("Cannot pass null to primitive parameter: " + targetType.getSimpleName());
+            }
+            return null;
+        }
+
+        if (arg instanceof Number) {
+            Number num = (Number) arg;
+            if (targetType == double.class || targetType == Double.class) return num.doubleValue();
+            if (targetType == int.class || targetType == Integer.class) return num.intValue();
+            if (targetType == float.class || targetType == Float.class) return num.floatValue();
+            if (targetType == long.class || targetType == Long.class) return num.longValue();
+        }
+
+        if (targetType == boolean.class || targetType == Boolean.class) {
+            if (arg instanceof Boolean) return arg;
+            return Boolean.parseBoolean(String.valueOf(arg));
+        }
+
+        if (targetType == String.class) return String.valueOf(arg);
+
         if (targetType.isInstance(arg)) return arg;
+
 
         String argStr = String.valueOf(arg);
         try {
@@ -137,12 +164,11 @@ public abstract class BlazingModule {
             if (targetType == int.class || targetType == Integer.class) return Integer.parseInt(argStr);
             if (targetType == float.class || targetType == Float.class) return Float.parseFloat(argStr);
             if (targetType == long.class || targetType == Long.class) return Long.parseLong(argStr);
-            if (targetType == boolean.class || targetType == Boolean.class) return Boolean.parseBoolean(argStr);
-            if (targetType == String.class) return argStr;
+
         } catch (NumberFormatException e) {
             BlazeLogger.addErrorLog("BlazingModule", "Failed to convert arg '" + arg + "' to " + targetType.getSimpleName());
         }
-        return arg; // Или выбросить IllegalArgumentException, если строгая типизация критична
+        return arg;
     }
 
     public void onStop(){
@@ -152,22 +178,28 @@ public abstract class BlazingModule {
     protected void processCommand(Object command) {
         if (command instanceof String) {
             String cmd = (String) command;
-            Runnable handler = commandHandlers.get(cmd);
+            CommandExecutor handler = commandHandlers.get(cmd);
             if (handler != null) {
-                handler.run();
+                try { handler.execute(new Object[0]); }
+                catch (Exception e) { throw new RuntimeException(e); }
             } else {
-                BlazeLogger.addDefaultLog(name, "Unknown command: " + cmd);
+                BlazeLogger.addWarnLog(name, "Unknown command: " + cmd);
             }
-        } else if (command instanceof CommandWithArgs) {
-            CommandWithArgs cmd = (CommandWithArgs) command;
-            Consumer<Object> handler = commandConsumers.get(cmd.name);
+
+        } else if (command instanceof Command) {
+            Command cmd = (Command) command;
+            CommandExecutor handler = commandHandlers.get(cmd.name);
+
+
             if (handler != null) {
-                handler.accept(cmd.args);
+                try { handler.execute(cmd.args); }
+                catch (Exception e) { throw new RuntimeException(e); }
             } else {
-                BlazeLogger.addDefaultLog(name, "Unknown command with args: " + cmd.name);
+                BlazeLogger.addWarnLog(name, "Unknown command: " + cmd.name);
             }
         }
     }
+
     public void addTelemetry(){
         if(telemetry == null) return;
         telemetry.addData(name.toUpperCase(),"");

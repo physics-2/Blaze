@@ -23,7 +23,8 @@ public interface Actuator {
     String getID();
     default void update(){}
 
-    default void setMode(TargetMode targetMode){};
+    default void setMode(TargetMode targetMode){}
+
     default TargetMode getMode() {
         return TargetMode.POSITION;
     }
