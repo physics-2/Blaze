@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.Testing.Tests;
 
 import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
+import org.firstinspires.ftc.teamcode.blaze.Alliance;
 import org.firstinspires.ftc.teamcode.blaze.BlazeCommon;
 import org.firstinspires.ftc.teamcode.blaze.MultiThread.SyncTopicBus;
 
 public class TestCore extends BlazeCommon {
     TestBlazingModule module;
-    public TestCore(Constants.Alliance alliance) {
+    public TestCore(Alliance alliance) {
         super(alliance);
         module = module(TestBlazingModule.class);
     }

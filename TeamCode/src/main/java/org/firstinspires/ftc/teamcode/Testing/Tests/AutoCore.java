@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Testing.Tests;
 
 import org.firstinspires.ftc.teamcode.Testing.Configs.Constants;
+import org.firstinspires.ftc.teamcode.blaze.Alliance;
 import org.firstinspires.ftc.teamcode.blaze.BlazeCommon;
 
 public class AutoCore extends BlazeCommon {
-    public AutoCore(Constants.Alliance alliance) {
+    public AutoCore(Alliance alliance) {
         super(alliance);
     }
 

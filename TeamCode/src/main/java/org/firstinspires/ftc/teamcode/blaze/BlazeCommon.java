@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.blaze;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Common.Configs.Constants;
 import org.firstinspires.ftc.teamcode.blaze.Anotations.GetModule;
 import org.firstinspires.ftc.teamcode.blaze.ModuleSubsystem.BlazingModule;
 import org.firstinspires.ftc.teamcode.blaze.MultiThread.SyncTopicBus;
@@ -25,7 +24,7 @@ public class BlazeCommon {
     protected final MultiDashTelemetry telemetry;
     protected Gamepad gamepad1;
     protected Gamepad gamepad2;
-    protected Constants.Alliance currentAlliance;
+    protected Alliance currentAlliance;
 
 
     /**
@@ -33,7 +32,7 @@ public class BlazeCommon {
      *
      * @param alliance The current alliance color for this OpMode run.
      */
-    public BlazeCommon(Constants.Alliance alliance) {
+    public BlazeCommon(Alliance alliance) {
         this.allModules = BlazeRegistry.getAll();
         this.hardwareMap = BlazeCore.getHardwareMap();
         this.telemetry = BlazeCore.getTelemetry();
@@ -48,9 +47,9 @@ public class BlazeCommon {
      * Sets up alliance-specific configurations by calling the appropriate hook.
      */
     public void setupAlliance(){
-        if (currentAlliance == Constants.Alliance.BLUE) {
+        if (currentAlliance == Alliance.BLUE) {
             onBlueAlliance();
-        } else if (currentAlliance == Constants.Alliance.RED) {
+        } else if (currentAlliance == Alliance.RED) {
             onRedAlliance();
         }
     }
@@ -182,14 +181,14 @@ public class BlazeCommon {
     /**
      * Updates the current alliance.
      */
-    public void setCurrentAlliance(Constants.Alliance currentAlliance) {
+    public void setCurrentAlliance(Alliance currentAlliance) {
         this.currentAlliance = currentAlliance;
     }
 
     /**
      * @return The current alliance.
      */
-    public Constants.Alliance getCurrentAlliance() {
+    public Alliance getCurrentAlliance() {
         return currentAlliance;
     }
 
